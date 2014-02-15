@@ -254,14 +254,15 @@ bool MainWindow::eventFilter(QObject *pObject, QEvent *pEvent)
     {
         flagExit = 1;
         hide();
-        qDebug() << "close";
+        ui->tableValue->clear();
         if (pr.isOpen())
         {
-//            pr.write("exit\n");
-//            pr.waitForBytesWritten();
+            pr.write("exit\n");
+            pr.waitForBytesWritten();
             pr.close();
-            pr.waitForFinished();
+            pr.waitForFinished(2000);
         }
+        qDebug() << "close";
         QMainWindow::close();
 //        delete this;
 //        return true;

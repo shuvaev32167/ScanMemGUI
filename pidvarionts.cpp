@@ -1,5 +1,6 @@
 #include "pidvarionts.h"
 #include "ui_pidvarionts.h"
+#include "ui_mainwindow.h"
 
 PidVarionts::PidVarionts(QWidget *parent) :
     QMainWindow(parent),
@@ -83,7 +84,7 @@ void PidVarionts::refreshProcess()
 //        qpr.waitForFinished();
 //    }
     qDebug()<<"start";
-    QString qs;
+    QString qs = "";
     if (this->flagExit)
         return;
     qpr.start("ps aux");
@@ -94,16 +95,20 @@ void PidVarionts::refreshProcess()
     qpr.waitForFinished(2000);
 //    sleep(1);
     qs += qpr.readAll();
+    while (qpr.size()!=0)
+        qs+=qpr.readAll();
     qDebug() << "qs = "<<qs;
 //    qDebug() << "qs = " << qs;
 //    qs=qs.simplified();
 //    qDebug() << "qs = " << qs;
     globalQsl = qs.split('\n');
 //    qDebug() << "qsl = " << qsl;
-    globalQsl.removeLast();
+    if (!globalQsl.empty())
+        globalQsl.removeLast();
 //    qDebug() << "globalQsl = " << globalQsl;
 //    globalQsl.removeLast();
-    globalQsl.removeFirst();
+    if (!globalQsl.empty())
+        globalQsl.removeFirst();
 //    qDebug() << "qs = " << qs;
 //    qDebug() << "1";
     for (int i =0; i <globalQsl.count(); i++)
@@ -120,6 +125,7 @@ void PidVarionts::refreshProcess()
 
 void PidVarionts::refreshTable()
 {
+    qDebug() << "refresh table";
     ui->tableProcess->setRowCount(0);
 //    qDebug() << "i";
     QTableWidgetItem *item;
@@ -251,6 +257,8 @@ void PidVarionts::on_tableProcess_doubleClicked(const QModelIndex &index)
             return;
         isEditPid0=true;
         isEditPid1=1;
+        mainWindow->ui->pushButtonSearch->setEnabled(1);
+        mainWindow->ui->pushButtonAdd->setEnabled(1);
 //        mainWindow->pr.write("option scan_data_type number");
 //        mainWindow->pr.waitForBytesWritten();
     }

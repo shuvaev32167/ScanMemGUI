@@ -278,44 +278,11 @@ void update(Ui::MainWindow *ui, MainWindow *w)
                 }
             }
         }
-        while (time.elapsed() <=2000)
+        while (time.elapsed() <=2500)
         {
-            if (flagExit)
-            {
-                break;
-            }
-            if (isEditData)
-            {
-                while (1)
-                {
-                    qDebug() << "Изменение значения";
-                    QString buf = ui->tableValue->item(myData.first().toUInt(),
-                                                       myTableWidget::enumColomn::type)->text().split('-').first().toLower();
-                    int k;
-                    if ((k=buf.lastIndexOf('s'))>0 ||
-                            (k=buf.lastIndexOf('u'))>0)
-                        buf.truncate(k);
-                    if (flagDel)
-                    {
-                        break;
-                    }
-                    qs = "write " +buf+' '+
-                            ui->tableValue->item(myData.first().toUInt(),myTableWidget::enumColomn::addr)->text()+
-                            ' '+ui->tableValue->item(myData.first().toUInt(),myTableWidget::enumColomn::value)->text() +'\n';
-                    qDebug() << qs;
-                    qpr.write(qs.toLatin1());
-                    qDebug() << qs.toLatin1();
-                    qpr.waitForBytesWritten();
-                    myData.removeFirst();
-                    if (myData.count() == 0)
-                    {
-                        isEditData=false;
-                        break;
-                    }
-                }
-            }
+
         }
-        }
+    }
 }
 
 void hold(Ui::MainWindow *ui, MainWindow *w)
@@ -386,7 +353,7 @@ void hold(Ui::MainWindow *ui, MainWindow *w)
                 }
             }
         }
-        while (time.elapsed() <=1000)
+        while (time.elapsed() <=1500)
         {
         }
     }
@@ -398,8 +365,10 @@ void underThread(Ui::MainWindow *ui)
     QString qs;
     QStringList qsl;
     bool pid =0;
+    QTime timer;
     while(1)
     {
+        timer.start();
         if (flagExit)
         {
             qpr.close();
@@ -441,5 +410,6 @@ void underThread(Ui::MainWindow *ui)
         }
         qpr.close();
         qpr.waitForBytesWritten();
+        while (timer.elapsed() <= 4000);
     }
 }
